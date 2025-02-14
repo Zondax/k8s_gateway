@@ -1,7 +1,4 @@
-image:
-  repository: rawmind/k8s_gateway
-  tag: ""
-  pullPolicy: IfNotPresent
+fullnameOverride: ${releaseName:=k8s_gateway}
 
 # Delegated domain
 domain: test.io

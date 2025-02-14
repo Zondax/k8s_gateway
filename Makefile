@@ -94,7 +94,7 @@ helm-template:
 	@if [ -d "$(THIS_MAKEFILE_DIR)/dist/chart/output" ]; then \
 		rm -r $(THIS_MAKEFILE_DIR)/dist/chart/output; \
 	fi
-	@cd deploy/chart; helm template test ./ --output-dir $(THIS_MAKEFILE_DIR)/dist/chart/output; cd $(THIS_MAKEFILE_DIR)
+	@cd deploy/chart; helm template test ./ --debug --output-dir $(THIS_MAKEFILE_DIR)/dist/chart/output; cd $(THIS_MAKEFILE_DIR)
 
 .PHONY: helm-package
 helm-package: helm-template

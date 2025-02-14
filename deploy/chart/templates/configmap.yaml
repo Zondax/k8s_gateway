@@ -4,9 +4,9 @@ metadata:
   name: {{ include "k8s-gateway.fullname" . }}
   labels:
     {{- include "k8s-gateway.labels" . | nindent 4 }}
-    {{- if .Values.customLabels }}
-    {{ toYaml .Values.customLabels | trim | nindent 4 }}
-    {{- end }}
+  {{- with .Values.customLabels }}
+    {{ toYaml . | trim | nindent 4 }}
+  {{- end }}
 data:
   Corefile: |-
     .:1053 {
@@ -23,23 +23,23 @@ data:
         k8s_gateway {{ required "Delegated domain ('domain') is mandatory " .Values.domain }} {
           apex {{ .Values.apex | default (include "k8s-gateway.fqdn" .) }}
           ttl {{ .Values.ttl }}
-          {{- if .Values.secondary }}
-          secondary {{ .Values.secondary }}
-          {{- end }}
-          {{- if .Values.watchedResources }}
-          resources {{ join " " .Values.watchedResources }}
-          {{- end }}
-          {{- if .Values.fallthrough.enabled }}
+        {{- with .Values.secondary }}
+          secondary {{ . }}
+        {{- end }}
+        {{- with .Values.watchedResources }}
+          resources {{ join " " . }}
+        {{- end }}
+        {{- if .Values.fallthrough.enabled }}
           fallthrough {{- range .Values.fallthrough.zones }} {{ . }} {{- end }}
-          {{- end }}
+        {{- end }}
         }
-        {{- range .Values.extraZonePlugins }}
-        {{ .name }}{{ if .parameters }} {{ .parameters }}{{ end }}{{ if .configBlock }} { {{ .configBlock | nindent 10 }}
+      {{- range .Values.extraZonePlugins }}
+        {{ .name }}{{ with .parameters }} {{ . }}{{ end }}{{ with .configBlock }} { {{ . | nindent 10 }}
         }{{ end }}
-        {{- end }}
-        {{- range .Values.zoneFiles }}
+      {{- end }}
+      {{- range .Values.zoneFiles }}
         file /etc/coredns/{{ .filename }}{{ if .domains }} {{ .domains }}{{ end }}
-        {{- end }}
+      {{- end }}
     }
   {{- range .Values.zoneFiles }}
   {{ .filename }}: {{ toYaml .contents | indent 4 }}

@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: ${namespace}
+labels:
+  - includeSelectors: false
+    pairs:
+      flux.zondax.io/src: flux-apps
+      flux.zondax.io/app: ${appName:=k8s_gateway}
+      flux.zondax.io/instance: ${releaseName:=k8s_gateway}
+      flux.zondax.io/tenant: ${tenant}
+resources:
+  - apps.yaml
+configMapGenerator:
+  - name: ${releaseName:=k8s_gateway}-values
+    files:
+      - values.yaml
+configurations:
+  - name-reference.yaml

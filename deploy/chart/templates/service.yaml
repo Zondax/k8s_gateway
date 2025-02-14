@@ -1,21 +1,19 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "k8s-gateway.fullname" . }}
-  labels:
-{{- if .Values.service.labels }}
-    {{- toYaml .Values.service.labels | nindent 4 }}
-{{- end }}
-    {{- include "k8s-gateway.labels" . | nindent 4 }}
-    {{- if .Values.customLabels }}
-    {{ toYaml .Values.customLabels | trim | nindent 4 }}
-    {{- end }}
+  {{- with .Values.service.annotations }}
   annotations:
-{{- if .Values.service.annotations }}
-    {{- toYaml .Values.service.annotations | nindent 4 }}
-{{- end }}
-    prometheus.io/port: "9153"
-    prometheus.io/scrape: "true"
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "k8s-gateway.labels" . | nindent 4 }}
+  {{- with .Values.service.labels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.customLabels }}
+    {{ toYaml . | trim | nindent 4 }}
+  {{- end }}
+  name: {{ include "k8s-gateway.fullname" . }}
 spec:
   selector:
     {{- include "k8s-gateway.selectorLabels" . | nindent 6 }}
@@ -31,7 +29,7 @@ spec:
     protocol: UDP
     name: dns-udp
     targetPort: dns-udp
-    {{- if (and (eq .Values.service.type "NodePort") (not (empty .Values.service.nodePort))) }}
+    {{- if and .Values.service.nodePort (eq .Values.service.type "NodePort") }}
     nodePort: {{ .Values.service.nodePort }}
     {{- end }}
   {{- if (eq .Values.service.useTcp true) }}
@@ -39,11 +37,11 @@ spec:
     protocol: TCP
     name: dns-tcp
     targetPort: dns-tcp
-    {{- if (and (eq .Values.service.type "NodePort") (not (empty .Values.service.nodePort))) }}
+    {{- if and .Values.service.nodePort (eq .Values.service.type "NodePort") }}
     nodePort: {{ .Values.service.nodePort }}
     {{- end }}
   {{- end }}
-  {{- if not (empty .Values.service.externalTrafficPolicy)}}
+  {{- if .Values.service.externalTrafficPolicy }}
   externalTrafficPolicy: {{ .Values.service.externalTrafficPolicy }}
   {{- end }}
   {{- with .Values.service.externalIPs}}
@@ -54,6 +52,6 @@ spec:
   ipFamilyPolicy: {{ .Values.service.ipFamilyPolicy }}
   {{- end }}
   {{- with .Values.service.ipFamilies }}
-  ipFamilies: 
-  {{- toYaml . | nindent 6 }}
+  ipFamilies:
+    {{- toYaml . | nindent 4 }}
   {{- end -}}
