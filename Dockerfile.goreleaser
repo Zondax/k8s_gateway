@@ -1,7 +1,13 @@
+FROM debian:stable-slim
+
+RUN apt-get update && apt-get -uy upgrade
+RUN apt-get -y install ca-certificates && update-ca-certificates
+
 FROM gcr.io/distroless/static:nonroot
 
-COPY coredns /usr/local/bin/coredns
+COPY --from=0 /etc/ssl/certs /etc/ssl/certs
+COPY coredns /coredns
 
 USER 65532:65532
 
-ENTRYPOINT ["/usr/local/bin/coredns"] 
+ENTRYPOINT ["/coredns"]

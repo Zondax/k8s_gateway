@@ -41,7 +41,7 @@ changelog:
 checksum:
   name_template: 'checksums.txt'
 release:
-  disable: true
+  disable: false
 dockers:
   - image_templates:
       [

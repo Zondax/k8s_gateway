@@ -35,6 +35,7 @@ jobs:
           curl -sL ${KUSTOMIZE_URL}/${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_${KUSTOMIZE_ARCH}.tar.gz | tar xzvOf - kustomize > ${LOCAL_BIN_FOLDER}/kustomize
           curl -sL ${KUBECONFORM_URL}/${KUBECONFORM_VERSION}/kubeconform-${KUBECONFORM_ARCH}.tar.gz | tar xzvOf - kubeconform > ${LOCAL_BIN_FOLDER}/kubeconform
           chmod 755 ${LOCAL_BIN_FOLDER}/flux ${LOCAL_BIN_FOLDER}/kustomize ${LOCAL_BIN_FOLDER}/kubeconform
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
