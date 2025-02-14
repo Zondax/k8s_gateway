@@ -164,10 +164,10 @@ flux-push:
 		--source="$(shell git config --get remote.origin.url)" \
 		--revision="$(shell git tag --points-at HEAD)@sha1:$(COMMIT_ID)" \
 		--path $(THIS_MAKEFILE_DIR)/dist/fluxapp/apps.yaml \
-		--creds zondax:${DOCKERHUB_TOKEN}
+		--creds ${DOCKERHUB_USER}:${DOCKERHUB_TOKEN}
 	@flux tag artifact oci://$(FLUXAPP_IMG):$(COMMIT_ID_SHORT) \
 		--tag $(FLUXAPP_VERSION) \
-		--creds zondax:${DOCKERHUB_TOKEN}
+		--creds ${DOCKERHUB_USER}:${DOCKERHUB_TOKEN}
 
 .PHONY: flux-release
 flux-release: flux-package flux-push
