@@ -1,6 +1,7 @@
 vendor
 coredns
 tilt_modules
+dist
 *.tmp
 .helm
 .vscode

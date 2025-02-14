@@ -1,0 +1,7 @@
+FROM gcr.io/distroless/static:nonroot
+
+COPY coredns /usr/local/bin/coredns
+
+USER 65532:65532
+
+ENTRYPOINT ["/usr/local/bin/coredns"] 

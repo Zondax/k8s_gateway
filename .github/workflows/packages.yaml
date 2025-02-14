@@ -1,0 +1,70 @@
+name: packages
+on:
+  push:
+    tags:
+      - '*\+chart'
+      - '*\+fluxapp'
+  pull_request:
+    branches:
+      - '*'
+    paths:
+      - 'deploy/**'
+
+jobs:
+  packages:
+    runs-on: ubuntu-latest
+    container:
+      image: alpine/helm:3.17
+      options: --tty
+    steps:
+      - name: Requirements
+        env:
+          KUBECONFORM_VERSION: v0.6.7
+          KUBECONFORM_ARCH: linux-amd64
+          KUBECONFORM_URL: https://github.com/yannh/kubeconform/releases/download
+          KUSTOMIZE_VERSION: v5.6.0
+          KUSTOMIZE_ARCH: linux_amd64
+          KUSTOMIZE_URL: https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize
+          FLUX_VERSION: 2.4.0
+          FLUX_ARCH: linux_amd64
+          FLUX_URL: https://github.com/fluxcd/flux2/releases/download
+          LOCAL_BIN_FOLDER: /usr/local/bin
+        run: |
+          apk add --no-cache make ca-certificates curl tar yq
+          curl -sL ${FLUX_URL}/v${FLUX_VERSION}/flux_${FLUX_VERSION}_${FLUX_ARCH}.tar.gz | tar xzvOf - flux > ${LOCAL_BIN_FOLDER}/flux
+          curl -sL ${KUSTOMIZE_URL}/${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_${KUSTOMIZE_ARCH}.tar.gz | tar xzvOf - kustomize > ${LOCAL_BIN_FOLDER}/kustomize
+          curl -sL ${KUBECONFORM_URL}/${KUBECONFORM_VERSION}/kubeconform-${KUBECONFORM_ARCH}.tar.gz | tar xzvOf - kubeconform > ${LOCAL_BIN_FOLDER}/kubeconform
+          chmod 755 ${LOCAL_BIN_FOLDER}/flux ${LOCAL_BIN_FOLDER}/kustomize ${LOCAL_BIN_FOLDER}/kubeconform
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0    # get everything
+
+      - name: Show changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global --add safe.directory /__w/whproxy/whproxy
+          git diff --name-only -r $(git merge-base --fork-point remotes/origin/master) HEAD | cat
+
+      - name: Build
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          make helm-package
+          make flux-package
+
+      - name: Chart Release
+        if: ${{ endsWith(github.ref, '+chart') }}
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          make helm-release
+
+      - name: Fluxapp Release
+        if: ${{ endsWith(github.ref, '+fluxapp') }}
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          make flux-release

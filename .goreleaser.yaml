@@ -1,0 +1,80 @@
+# The lines below are called `modelines`. See `:help modeline`
+# Feel free to remove those if you don't want/need to use them.
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
+
+version: 2
+project_name: k8s_gateway
+before:
+  hooks:
+    - go mod tidy
+    - go vet ./...
+    - gofmt -l -s -d .
+    - golangci-lint run --timeout=5m0s
+    - go test -race ./... -short
+builds:
+  - binary: coredns
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - freebsd
+    goarch:
+      - amd64
+      - arm64
+      - mips64
+    id: coredns
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X github.com/coredns/coredns/coremain.GitCommit={{.Commit}}
+    main: ./cmd/coredns.go
+archives:
+  - formats:
+    - tar.xz
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - '^ci:'
+checksum:
+  name_template: 'checksums.txt'
+release:
+  disable: true
+dockers:
+  - image_templates:
+      [
+        "rawmind/{{ .ProjectName }}:{{ .Version }}-amd64",
+      ]
+    goarch: amd64
+    dockerfile: Dockerfile.goreleaser
+    use: buildx
+    build_flag_templates:
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--platform=linux/amd64"
+  - image_templates:
+      [
+        "rawmind/{{ .ProjectName }}:{{ .Version }}-arm64",
+      ]
+    goarch: arm64
+    dockerfile: Dockerfile.goreleaser
+    use: buildx
+    build_flag_templates:
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--platform=linux/arm64"
+docker_manifests:
+  - name_template: "rawmind/{{ .ProjectName }}:{{ .Version }}"
+    image_templates:
+      - "rawmind/{{ .ProjectName }}:{{ .Version }}-amd64"
+      - "rawmind/{{ .ProjectName }}:{{ .Version }}-arm64"
+  - name_template: "rawmind/{{ .ProjectName }}:latest"
+    image_templates:
+      - "rawmind/{{ .ProjectName }}:{{ .Version }}-amd64"
+      - "rawmind/{{ .ProjectName }}:{{ .Version }}-arm64"
