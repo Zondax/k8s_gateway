@@ -16,8 +16,6 @@ jobs:
     container:
       image: goreleaser/goreleaser:v2.7.0
       options: --tty
-      volumes:
-        - /run/docker/docker.sock:/run/docker/docker.sock
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,7 +26,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config --global --add safe.directory /__w/whproxy/whproxy
+          git config --global --add safe.directory /__w/rawmind0/k8s_gateway
           git diff --name-only -r $(git merge-base --fork-point remotes/origin/master) HEAD | cat
 
       - name: Build
@@ -41,7 +39,6 @@ jobs:
       - name: Release
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
         env:
-          DOCKER_HOST: unix:///run/docker/docker.sock
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
           GITHUB_URL: ${{ github.event.pull_request.comments_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
