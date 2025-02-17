@@ -6,7 +6,7 @@ spec:
   interval: 10m
   url: oci://${zondaxRegistry}/rawmind/k8s_gateway
   ref:
-    tag: ${releaseVersion:=2.5.1-0}
+    tag: ${releaseVersion:=2.5.1-1}
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease

@@ -1,3 +1,7 @@
+{{- $clusterIPs := list -}}
+{{- with .Values.service.clusterIPs -}}
+  {{- $clusterIPs = splitList "," . -}}
+{{- end -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -24,12 +28,12 @@ spec:
     {{- end }}
   allocateLoadBalancerNodePorts: {{ .Values.service.allocateLoadBalancerNodePorts }}
   {{- end }}
-  {{- with .Values.service.clusterIP }}
-  clusterIP: {{ .Values.service.clusterIP }}
+  {{- if or .Values.service.clusterIP .Values.service.clusterIPs }}
+  clusterIP: {{ or (first $clusterIPs) .Values.service.clusterIP }}
   {{- end }}
   {{- with .Values.service.clusterIPs }}
   clusterIPs:
-    {{- range split "," . }}
+    {{- range $clusterIPs }}
     - {{ . }}
     {{- end }}
   {{- end }}
