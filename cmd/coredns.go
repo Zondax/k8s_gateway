@@ -11,35 +11,31 @@ import (
 	"github.com/coredns/coredns/coremain"
 )
 
-var dropPlugins = map[string]bool{
-	"kubernetes":   true,
-	"k8s_external": true,
-}
+const pluginName = "k8s_gateway"
 
-const pluginVersion = "0.4.0"
+var (
+	version = "dev"
+	dropPlugins = map[string]struct{}{
+		"kubernetes":   struct{}{},
+		"k8s_external": struct{}{},
+	}
+)
 
 func init() {
 	var directives []string
-	var alreadyAdded bool
 
 	for _, name := range dnsserver.Directives {
-
-		if dropPlugins[name] {
-			if !alreadyAdded {
-				directives = append(directives, "k8s_gateway")
-				alreadyAdded = true
-			}
+		if _, ok := dropPlugins[name]; ok {
 			continue
 		}
 		directives = append(directives, name)
 	}
 
-	dnsserver.Directives = directives
-
+	dnsserver.Directives = append(directives, pluginName)
 }
 
 func main() {
 	// extend CoreDNS version with plugin details
-	caddy.AppVersion = fmt.Sprintf("%s+k8s_gateway-%s", coremain.CoreVersion, pluginVersion)
+	caddy.AppVersion = fmt.Sprintf("%s+%s-%s", coremain.CoreVersion, pluginName, version)
 	coremain.Run()
 }

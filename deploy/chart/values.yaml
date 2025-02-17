@@ -82,7 +82,7 @@ service:
   useTcp: false
 
 serviceMonitor:
-  enabled: true
+  enabled: false
   port: 9153
   interval: 30s
   path: /metrics
