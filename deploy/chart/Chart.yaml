@@ -2,8 +2,8 @@ apiVersion: v2
 name: k8s_gateway
 description: A Helm chart for the k8s_gateway CoreDNS plugin
 type: application
-version: 2.5.1-1
-appVersion: 0.5.1
+version: 2.6.0-2
+appVersion: 0.6.0
 maintainers:
   - email: rawmind@gmail.com
     name: Rawmind
