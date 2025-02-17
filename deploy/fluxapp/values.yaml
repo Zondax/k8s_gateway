@@ -37,6 +37,3 @@ service:
 serviceMonitor:
   enabled: true
   interval: 30s
-
-
-clusterExtDns
