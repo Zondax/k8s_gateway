@@ -32,7 +32,11 @@ service:
   type: LoadBalancer
   port: 53
   ipFamilyPolicy: PreferDualStack
+  clusterIPs: ${clusterExtDns:=10.43.0.11,fd80:cefa:43::11}
 
 serviceMonitor:
   enabled: true
   interval: 30s
+
+
+clusterExtDns
