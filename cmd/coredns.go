@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	_ "github.com/coredns/alternate"
 	_ "github.com/coredns/coredns/core/plugin"
 	_ "github.com/rawmind/k8s_gateway"
 
@@ -14,15 +15,23 @@ import (
 const pluginName = "k8s_gateway"
 
 var (
-	version = "dev"
+	version     = "dev"
 	dropPlugins = map[string]struct{}{
 		"kubernetes":   struct{}{},
 		"k8s_external": struct{}{},
+	}
+	addPlugins = map[string]struct{}{
+		pluginName:  struct{}{},
+		"alternate": struct{}{},
 	}
 )
 
 func init() {
 	var directives []string
+
+	for name := range addPlugins {
+		directives = append(directives, name)
+	}
 
 	for _, name := range dnsserver.Directives {
 		if _, ok := dropPlugins[name]; ok {
@@ -31,7 +40,8 @@ func init() {
 		directives = append(directives, name)
 	}
 
-	dnsserver.Directives = append(directives, pluginName)
+	dnsserver.Directives = directives
+	fmt.Print(directives)
 }
 
 func main() {

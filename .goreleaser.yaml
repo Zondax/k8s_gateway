@@ -19,11 +19,9 @@ builds:
     goos:
       - linux
       - darwin
-      - freebsd
     goarch:
       - amd64
       - arm64
-      - mips64
     id: coredns
     ldflags:
       - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X github.com/coredns/coredns/coremain.GitCommit={{.Commit}}
