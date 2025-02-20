@@ -1,14 +1,14 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "k8s-gateway.name" -}}
+{{- define "coredns-gateway.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "k8s-gateway.chart" -}}
+{{- define "coredns-gateway.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
@@ -16,7 +16,7 @@ Create chart name and version as used by the chart label.
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
-{{- define "k8s-gateway.fullname" -}}
+{{- define "coredns-gateway.fullname" -}}
 {{- if .Values.fullnameOverride -}}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
@@ -33,16 +33,16 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 Create a default fully qualified controller name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
-{{- define "k8s-gateway.controller.fullname" -}}
-{{- printf "%s-%s" (include "k8s-gateway.fullname" .) .Values.controller.name | trunc 63 | trimSuffix "-" -}}
+{{- define "coredns-gateway.controller.fullname" -}}
+{{- printf "%s-%s" (include "coredns-gateway.fullname" .) .Values.controller.name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
 Common labels
 */}}
-{{- define "k8s-gateway.labels" -}}
-helm.sh/chart: {{ include "k8s-gateway.chart" . }}
-{{ include "k8s-gateway.selectorLabels" . }}
+{{- define "coredns-gateway.labels" -}}
+helm.sh/chart: {{ include "coredns-gateway.chart" . }}
+{{ include "coredns-gateway.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -52,17 +52,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "k8s-gateway.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "k8s-gateway.name" . }}
+{{- define "coredns-gateway.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "coredns-gateway.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the controller service account to use
 */}}
-{{- define "k8s-gateway.serviceAccountName" -}}
+{{- define "coredns-gateway.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create -}}
-    {{ default (include "k8s-gateway.fullname" .) .Values.serviceAccount.name }}
+    {{ default (include "coredns-gateway.fullname" .) .Values.serviceAccount.name }}
 {{- else -}}
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
@@ -71,14 +71,14 @@ Create the name of the controller service account to use
 {{/*
 Create the "name" + "." + "namespace" fqdn
 */}}
-{{- define "k8s-gateway.fqdn" -}}
-{{- printf "%s.%s" (include "k8s-gateway.fullname" .) .Release.Namespace | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
+{{- define "coredns-gateway.fqdn" -}}
+{{- printf "%s.%s" (include "coredns-gateway.fullname" .) .Release.Namespace | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
 Create the matchable regex from domain
 */}}
-{{- define "k8s-gateway.regex" -}}
+{{- define "coredns-gateway.regex" -}}
 {{- if .Values.domain -}}
 {{- .Values.domain | replace "." "[.]" -}}
 {{- else -}}

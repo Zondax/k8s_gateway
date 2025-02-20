@@ -1,4 +1,4 @@
-fullnameOverride: ${releaseName:=k8s_gateway}
+fullnameOverride: ${releaseName:=coredns_gateway}
 
 replicaCount: 2
 
@@ -8,7 +8,7 @@ domain: ${clusterDomain}
 # TTL for non-apex responses (in seconds)
 ttl: 300
 
-# Enabled fallthrough for k8s_gateway
+# Enabled fallthrough for coredns_gateway
 fallthrough:
   enabled: false
   zones: []

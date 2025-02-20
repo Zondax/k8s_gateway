@@ -5,13 +5,13 @@ labels:
   - includeSelectors: false
     pairs:
       flux.zondax.io/src: flux-apps
-      flux.zondax.io/app: ${appName:=k8s_gateway}
-      flux.zondax.io/instance: ${releaseName:=k8s_gateway}
+      flux.zondax.io/app: ${appName:=coredns_gateway}
+      flux.zondax.io/instance: ${releaseName:=coredns_gateway}
       flux.zondax.io/tenant: ${tenant}
 resources:
   - apps.yaml
 configMapGenerator:
-  - name: ${releaseName:=k8s_gateway}-values
+  - name: ${releaseName:=coredns_gateway}-values
     files:
       - values.yaml
 configurations:

@@ -1,5 +1,5 @@
-# k8s-gateway
-A simple chart to install [k8s_gateway](https://github.com/ori-edge/k8s_gateway)
+# coredns-gateway
+A simple chart to install [k8s_gateway](https://github.com/rawmind0/k8s_gateway)
 
 
 ## Parameters
@@ -16,7 +16,7 @@ The following table lists the configurable parameters of the k8s_gateway chart a
 | `ttl`                            | TTL for non-apex responses (in seconds)                                                   | `300`                 |
 | `dnsChallenge.enabled`           | Optional configuration option for DNS01 challenge                                         | `false`               |
 | `dnsChallenge.domain`            | See: https://cert-manager.io/docs/configuration/acme/dns01/                               | `dns01.clouddns.com`  |
-| `extraZonePlugins`               | Optional extra plugins to be added to the zone, e.g. "forward . /etc/resolv.conf"         | `""`                  | 
+| `extraZonePlugins`               | Optional extra plugins to be added to the zone, e.g. "forward . /etc/resolv.conf"         | `""`                  |
 | `image.registry`                 | Image registry                                                                            | `quay.io`             |
 | `image.repository`               | Image repository                                                                          | `oriedge/k8s_gateway` |
 | `image.tag`                      | Image tag                                                                                 | `latest`              |

@@ -1,58 +1,60 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "k8s-gateway.fullname" . }}
+  name: {{ include "coredns-gateway.fullname" . }}
   labels:
-    {{- include "k8s-gateway.labels" . | nindent 4 }}
-    {{- if .Values.customLabels }}
+    {{- include "coredns-gateway.labels" . | nindent 4 }}
+  {{- if .Values.customLabels }}
     {{ toYaml .Values.customLabels | trim | nindent 4 }}
-    {{- end }}
+  {{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "k8s-gateway.selectorLabels" . | nindent 6 }}
+      {{- include "coredns-gateway.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "k8s-gateway.labels" . | nindent 8 }}
-        {{- if .Values.customLabels }}
+        {{- include "coredns-gateway.labels" . | nindent 8 }}
+      {{- if .Values.customLabels }}
         {{ toYaml .Values.customLabels | trim | nindent 8 }}
-        {{- end }}
+      {{- end }}
       annotations:
         checksum/config: {{ toYaml .Values | sha256sum }}
     spec:
-      serviceAccountName: {{ include "k8s-gateway.serviceAccountName" . }}
+      serviceAccountName: {{ include "coredns-gateway.serviceAccountName" . }}
       containers:
-      - name: k8s-gateway
+      - name: coredns-gateway
         image: {{ printf "%s:%s" .Values.image.repository ( or .Values.image.tag .Chart.AppVersion) }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         args: [ "-conf", "/etc/coredns/Corefile" ]
-        {{- if .Values.secure }}
+      {{- if .Values.secure }}
         securityContext:
           runAsUser: 1000
-        {{- end }}
+      {{- end }}
         volumeMounts:
         - name: config-volume
           mountPath: /etc/coredns
+      {{- with .Values.resources }}
         resources:
-          {{- toYaml .Values.resources | nindent 12 }}
+          {{- toYaml . | nindent 12 }}
+      {{- end }}
         ports:
-        - containerPort: 1053
+        - containerPort: {{ .Values.port }}
           name: dns-udp
           protocol: UDP
-        {{- if (eq .Values.service.useTcp true) }}
-        - containerPort: 1053
+      {{- if (eq .Values.service.useTcp true) }}
+        - containerPort: {{ .Values.port }}
           name: dns-tcp
           protocol: TCP
-        {{- end }}
-        {{- range .Values.extraZonePlugins | uniq }}
+      {{- end }}
+      {{- range .Values.extraZonePlugins | uniq }}
         {{- if eq .name "prometheus" }}
         - containerPort: {{ .parameters | regexFind "[^\\:]*$" }}
           name: metrics
           protocol: TCP
         {{- end }}
-        {{- end }}
+      {{- end }}
         livenessProbe:
           httpGet:
             path: /health
@@ -74,14 +76,14 @@ spec:
       volumes:
         - name: config-volume
           configMap:
-            name: {{ include "k8s-gateway.fullname" . }}
+            name: {{ include "coredns-gateway.fullname" . }}
             items:
             - key: Corefile
               path: Corefile
-            {{- range .Values.zoneFiles }}
+          {{- range .Values.zoneFiles }}
             - key: {{ .filename }}
               path: {{ .filename }}
-            {{- end }}
+          {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

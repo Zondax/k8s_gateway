@@ -4,7 +4,13 @@ image:
   pullPolicy: IfNotPresent
 
 # Delegated domain
-domain: test.io
+domain: ""
+port: 1053
+config:
+  template: coredns
+  raw: ""
+
+servers: {}
 
 # Labels to apply to all resources
 customLabels: {}

@@ -10,17 +10,17 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
   labels:
-    {{- include "k8s-gateway.labels" . | nindent 4 }}
+    {{- include "coredns-gateway.labels" . | nindent 4 }}
   {{- with .Values.service.labels }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
   {{- with .Values.customLabels }}
     {{ toYaml . | trim | nindent 4 }}
   {{- end }}
-  name: {{ include "k8s-gateway.fullname" . }}
+  name: {{ include "coredns-gateway.fullname" . }}
 spec:
   selector:
-    {{- include "k8s-gateway.selectorLabels" . | nindent 6 }}
+    {{- include "coredns-gateway.selectorLabels" . | nindent 6 }}
   type: {{ .Values.service.type }}
   {{- if eq .Values.service.type "LoadBalancer" }}
     {{- if .Values.service.loadBalancerIP }}
