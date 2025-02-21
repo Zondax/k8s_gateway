@@ -5,13 +5,13 @@ labels:
   - includeSelectors: false
     pairs:
       flux.zondax.io/src: flux-apps
-      flux.zondax.io/app: ${appName:=coredns_gateway}
-      flux.zondax.io/instance: ${releaseName:=coredns_gateway}
+      flux.zondax.io/app: ${appName:=coredns-gateway}
+      flux.zondax.io/instance: ${releaseName:=coredns-gateway}
       flux.zondax.io/tenant: ${tenant}
 resources:
   - apps.yaml
 configMapGenerator:
-  - name: ${releaseName:=coredns_gateway}-values
+  - name: ${releaseName:=coredns-gateway}-values
     files:
       - values.yaml
 configurations:

@@ -1,23 +1,23 @@
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: OCIRepository
 metadata:
-  name: ${releaseName:=coredns_gateway}
+  name: ${releaseName:=coredns-gateway}
 spec:
   interval: 10m
-  url: oci://${zondaxRegistry}/rawmind/coredns_gateway
+  url: oci://${zondaxRegistry}/rawmind/coredns-gateway
   ref:
-    tag: ${releaseVersion:=2.6.1-1}
+    tag: ${releaseVersion:=0.6.1-1}
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: ${releaseName:=coredns_gateway}
+  name: ${releaseName:=coredns-gateway}
 spec:
   serviceAccountName: ${serviceAccountHelm}
   interval: 10m
   chartRef:
     kind: OCIRepository
-    name: ${releaseName:=coredns_gateway}
+    name: ${releaseName:=coredns-gateway}
   install:
     createNamespace: true
     remediation:
@@ -25,11 +25,11 @@ spec:
   upgrade:
     remediation:
       remediateLastFailure: false
-  targetNamespace: ${targetNamespace:=flux-system}
-  releaseName: ${releaseName:=coredns_gateway}
+  targetNamespace: ${targetNamespace:=kube-system}
+  releaseName: ${releaseName:=coredns-gateway}
   valuesFrom:
     - kind: ConfigMap
-      name: ${releaseName:=coredns_gateway}-values
+      name: ${releaseName:=coredns-gateway}-values
     - kind: ConfigMap
       name: ${k8sGatewayValues:=nonExistent}
       optional: true

@@ -1,40 +1,46 @@
-fullnameOverride: ${releaseName:=coredns_gateway}
-
+fullnameOverride: ${releaseName:=coredns-gateway}
 replicaCount: 2
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 32Mi
 
 # Delegated domain
 domain: ${clusterDomain}
-
-# TTL for non-apex responses (in seconds)
-ttl: 300
-
-# Enabled fallthrough for coredns_gateway
-fallthrough:
-  enabled: false
-  zones: []
-
-# Optional plugins that will be enabled in the zone, e.g. "forward . /etc/resolve.conf"
-extraZonePlugins:
-  - name: log
-  - name: errors
-  # Serves a /health endpoint on :8080, required for livenessProbe
-  - name: health
-    configBlock: |-
-      lameduck 5s
-  # Serves a /ready endpoint on :8181, required for readinessProbe
-  - name: ready
-  # Serves a /metrics endpoint on :9153, required for serviceMonitor
-  - name: prometheus
-    parameters: 0.0.0.0:9153
-  - name: loop
-  - name: reload
-  - name: loadbalance
+port: 1053
+config:
+  template: coredns
+  raw: |-
+    .:{{ .Values.port }} {
+      log
+      errors
+      health {
+        lameduck 5s
+      }
+      ready
+      prometheus 0.0.0.0:{{ .Values.config.metrics.port }}
+      k8s_gateway {{ .Values.domain }} {
+        apex {{ or .Values.apex (include "coredns-gateway.fqdn" .) }}
+        ttl 300
+        fallthrough {{ .Values.domain }}
+      }
+      forward . ${clusterDnsUpsIPs:=tls://1.1.1.1:853 tls://1.0.0.1:853 tls://[2606:4700:4700::1111]:853 tls://[2606:4700:4700::1001]:853} {
+      }
+      loop
+      reload
+      loadbalance
+    }
 
 service:
   type: LoadBalancer
   port: 53
   ipFamilyPolicy: PreferDualStack
-  clusterIPs: ${clusterExtDns:=10.43.0.11,fd80:cefa:43::11}
+  clusterIPs: ${clusterDnsExtIPs:=10.43.0.11,fd80:cefa:43::11}
+  annotations:
+    lbipam.cilium.io/ips: ${clusterDnsVipIPs:=""}
 
 serviceMonitor:
   enabled: true

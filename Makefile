@@ -12,7 +12,7 @@ IMG_NAME ?= $(BIN)
 IMG_PREFIX ?= $(REGISTRY)/rawmind
 IMG ?= ${IMG_PREFIX}/${IMG_NAME}:${VERSION}
 DOCKERHUB_USER ?= rawmind
-FLUXAPP_NAME ?= ${IMG_NAME}-fluxapp
+FLUXAPP_NAME ?= coredns-gateway-fluxapp
 FLUXAPP_IMG ?= $(IMG_PREFIX)/${FLUXAPP_NAME}
 FLUXAPP_VERSION ?= $(shell cat deploy/fluxapp/version)
 
