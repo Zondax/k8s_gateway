@@ -27,8 +27,16 @@ config:
         ttl 300
         fallthrough {{ .Values.domain }}
       }
-      forward . ${clusterDnsUpsIPs:=tls://1.1.1.1:853 tls://1.0.0.1:853 tls://[2606:4700:4700::1111]:853 tls://[2606:4700:4700::1001]:853} {
+    {{- with .Values.config.extraVars.forwardNext }}
+      {{- range $k, $v := . }}
+      forward {{ $k }} {{ $v }} {
+        prefer_udp
+        next NXDOMAIN SERVFAIL REFUSED
       }
+      {{- end }}
+    {{- end }}
+      forward . ${clusterDnsUpsIPs:=tls://1.1.1.1:853 tls://1.0.0.1:853 tls://[2606:4700:4700::1111]:853 tls://[2606:4700:4700::1001]:853}
+      cache 10
       loop
       reload
       loadbalance

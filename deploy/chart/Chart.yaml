@@ -2,7 +2,7 @@ apiVersion: v2
 name: coredns-gateway
 description: A Helm chart for the cordens with k8s_gateway and alternate CoreDNS plugins
 type: application
-version: 0.6.1-1
+version: 0.6.1-2
 appVersion: 0.6.1
 maintainers:
   - email: rawmind@gmail.com

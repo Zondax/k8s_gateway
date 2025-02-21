@@ -10,7 +10,7 @@
   }
   {{- end }}
   k8s_gateway {{ required "Delegated domain ('domain') is mandatory " .Values.domain }} {
-    apex {{ .Values.apex | default (include "k8s-gateway.fqdn" .) }}
+    apex {{ .Values.apex | default (include "coredns-gateway.fqdn" .) }}
     ttl {{ .Values.ttl }}
   {{- with .Values.secondary }}
     secondary {{ . }}
@@ -23,7 +23,7 @@
   {{- end }}
   }
 {{- range .Values.extraZonePlugins }}
-  {{ .name }}{{ with .parameters }} {{ . }}{{ end }}{{ with .configBlock }} { {{ . | nindent 10 }}
+  {{ .name }}{{ with .parameters }} {{ . }}{{ end }}{{ with .configBlock }} { {{ . | nindent 4 }}
   }{{ end }}
 {{- end }}
 {{- range .Values.zoneFiles }}
