@@ -1,6 +1,10 @@
 {{- $clusterIPs := list -}}
 {{- with .Values.service.clusterIPs -}}
-  {{- $clusterIPs = splitList "," . -}}
+  {{- if kindIs "string" . -}}
+    {{- $clusterIPs = splitList "," . -}}
+  {{- else -}}
+    {{- $clusterIPs = . -}}
+  {{- end -}}
 {{- end -}}
 apiVersion: v1
 kind: Service
@@ -11,31 +15,28 @@ metadata:
   {{- end }}
   labels:
     {{- include "coredns-gateway.labels" . | nindent 4 }}
-  {{- with .Values.service.labels }}
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
   {{- with .Values.customLabels }}
     {{ toYaml . | trim | nindent 4 }}
+  {{- end }}
+  {{- with .Values.service.labels }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
   name: {{ include "coredns-gateway.fullname" . }}
 spec:
   selector:
-    {{- include "coredns-gateway.selectorLabels" . | nindent 6 }}
+    {{- include "coredns-gateway.selectorLabels" . | nindent 4 }}
   type: {{ .Values.service.type }}
   {{- if eq .Values.service.type "LoadBalancer" }}
     {{- if .Values.service.loadBalancerIP }}
   loadBalancerIP: {{ .Values.service.loadBalancerIP }}
     {{- end }}
-  allocateLoadBalancerNodePorts: {{ .Values.service.allocateLoadBalancerNodePorts }}
+  allocateLoadBalancerNodePorts: {{ or .Values.service.allocateLoadBalancerNodePorts false }}
   {{- end }}
   {{- if or .Values.service.clusterIP .Values.service.clusterIPs }}
   clusterIP: {{ or (first $clusterIPs) .Values.service.clusterIP }}
   {{- end }}
-  {{- with .Values.service.clusterIPs }}
-  clusterIPs:
-    {{- range $clusterIPs }}
-    - {{ . }}
-    {{- end }}
+  {{- with $clusterIPs }}
+  clusterIPs: {{ toYaml . | nindent 4 }}
   {{- end }}
   ports:
   - port: {{ .Values.service.port }}

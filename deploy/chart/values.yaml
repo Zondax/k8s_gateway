@@ -8,6 +8,14 @@ domain: ""
 port: 1053
 config:
   template: coredns
+  metrics:
+    enabled: true
+    port: 9153
+    interval: 30s
+    path: /metrics
+  probes:
+    liveness: true
+    readiness: true
   raw: ""
 
 servers: {}
@@ -19,7 +27,13 @@ customLabels: {}
 ttl: 300
 
 # Resources (CPU, memory etc)
-resources: {}
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 32Mi
 
 # Limit what kind of resources to watch, e.g. watchedResources: ["Ingress"]
 watchedResources: []
@@ -77,6 +91,7 @@ service:
   # loadBalancerIP: 192.168.1.2
   # clusterIP: 10.43.0.53
   # clusterIPs: 10.43.0.53,fd80:cefa:43::53
+  # clusterIPs: ["10.43.0.53","fd80:cefa:43::53"]
   # externalTrafficPolicy: Local
   # externalIPs:
   #  - 192.168.1.3
@@ -91,9 +106,6 @@ service:
 
 serviceMonitor:
   enabled: false
-  port: 9153
-  interval: 30s
-  path: /metrics
   annotations: {}
   labels: {}
 

@@ -4,8 +4,8 @@ metadata:
   name: {{ include "coredns-gateway.fullname" . }}
   labels:
     {{- include "coredns-gateway.labels" . | nindent 4 }}
-  {{- if .Values.customLabels }}
-    {{ toYaml .Values.customLabels | trim | nindent 4 }}
+  {{- with .Values.customLabels }}
+    {{ toYaml . | trim | nindent 4 }}
   {{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
@@ -37,7 +37,7 @@ spec:
           mountPath: /etc/coredns
       {{- with .Values.resources }}
         resources:
-          {{- toYaml . | nindent 12 }}
+          {{- toYaml . | nindent 10 }}
       {{- end }}
         ports:
         - containerPort: {{ .Values.port }}
@@ -48,13 +48,12 @@ spec:
           name: dns-tcp
           protocol: TCP
       {{- end }}
-      {{- range .Values.extraZonePlugins | uniq }}
-        {{- if eq .name "prometheus" }}
-        - containerPort: {{ .parameters | regexFind "[^\\:]*$" }}
+      {{- if .Values.config.metrics.enabled }}
+        - containerPort: {{ .Values.config.metrics.port }}
           name: metrics
           protocol: TCP
-        {{- end }}
       {{- end }}
+      {{- if .Values.config.probes.liveness }}
         livenessProbe:
           httpGet:
             path: /health
@@ -64,6 +63,8 @@ spec:
           timeoutSeconds: 5
           successThreshold: 1
           failureThreshold: 5
+      {{- end }}
+      {{- if .Values.config.probes.readiness }}
         readinessProbe:
           httpGet:
             path: /ready
@@ -73,6 +74,7 @@ spec:
           timeoutSeconds: 5
           successThreshold: 1
           failureThreshold: 5
+      {{- end }}
       volumes:
         - name: config-volume
           configMap:

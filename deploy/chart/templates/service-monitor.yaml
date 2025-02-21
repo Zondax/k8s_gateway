@@ -1,4 +1,4 @@
-{{- if .Values.serviceMonitor.enabled }}
+{{- if and .Values.serviceMonitor.enabled .Values.config.metrics.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
@@ -9,6 +9,9 @@ metadata:
   {{- end }}
   labels:
     {{- include "coredns-gateway.labels" $ | nindent 4 }}
+  {{- with .Values.customLabels }}
+    {{ toYaml . | trim | nindent 4 }}
+  {{- end }}
   {{- with .Values.serviceMonitor.labels }}
       {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -17,7 +20,7 @@ spec:
     matchLabels:
       {{- include "coredns-gateway.selectorLabels" . | nindent 6 }}
   endpoints:
-    - targetPort: {{ .Values.serviceMonitor.port }}
-      interval: {{ .Values.serviceMonitor.interval }}
-      path: {{ .Values.serviceMonitor.path }}
+    - targetPort: {{ .Values.config.metrics.port }}
+      interval: {{ .Values.config.metrics.interval }}
+      path: {{ .Values.config.metrics.path }}
 {{- end }}
