@@ -38,8 +38,16 @@ changelog:
       - '^ci:'
 checksum:
   name_template: 'checksums.txt'
+git:
+  ignore_tags:
+    - '*\+fluxapp*'
+    - '*\+chart*'
+
 release:
   disable: false
+  footer: |
+    ## Docker Images
+    - `rawmind/k8s_gateway:{{ .Tag }}`
 dockers:
   - image_templates:
       [
