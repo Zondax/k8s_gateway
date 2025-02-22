@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 
-	_ "github.com/coredns/alternate"
 	_ "github.com/coredns/coredns/core/plugin"
 	_ "github.com/rawmind/k8s_gateway"
 
@@ -22,7 +21,6 @@ var (
 	}
 	addPlugins = map[string]struct{}{
 		pluginName:  struct{}{},
-		"alternate": struct{}{},
 	}
 )
 
