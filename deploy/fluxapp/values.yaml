@@ -15,7 +15,6 @@ config:
   template: coredns
   raw: |-
     .:{{ .Values.port }} {
-      log
       errors
       health {
         lameduck 5s
