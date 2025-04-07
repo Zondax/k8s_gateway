@@ -6,7 +6,7 @@ spec:
   interval: 10m
   url: oci://${zondaxRegistry}/zondax/coredns-gateway
   ref:
-    tag: ${releaseVersion:=1.12.0}
+    tag: ${releaseVersion:=1.12.1}
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
