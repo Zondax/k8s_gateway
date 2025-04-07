@@ -9,9 +9,9 @@ LDFLAGS := "-s -w -X github.com/coredns/coredns/coremain.GitCommit=$(COMMIT_ID_S
 # Image URL to use all building/pushing image targets
 REGISTRY ?= registry-1.docker.io
 IMG_NAME ?= $(BIN)
-IMG_PREFIX ?= $(REGISTRY)/rawmind
+IMG_PREFIX ?= $(REGISTRY)/zondax
 IMG ?= ${IMG_PREFIX}/${IMG_NAME}:${VERSION}
-DOCKERHUB_USER ?= rawmind
+DOCKERHUB_USER ?= zondax
 FLUXAPP_NAME ?= coredns-gateway-fluxapp
 FLUXAPP_IMG ?= $(IMG_PREFIX)/${FLUXAPP_NAME}
 FLUXAPP_VERSION ?= $(shell cat deploy/fluxapp/version)

@@ -32,7 +32,7 @@ This plugin is **NOT** supposed to be used for intra-cluster DNS resolution and 
 The recommended installation method is using the helm chart provided in the repo:
 
 ```
-helm install exdns --set domain=foo oci://registry-1.docker.io/rawmind/coredns-gateway --version 1.12.0-0
+helm install exdns --set domain=foo oci://registry-1.docker.io/zondax/coredns-gateway --version 1.12.1
 ```
 
 ## Configure
@@ -92,8 +92,8 @@ For example, the above requirements could be satisfied with the following comman
 
 1. Install two instances of `k8s_plugin` gateway pointing at each other:
 ```
-helm install -n kube-system exdns-1 --set domain=zone.example.com --set secondary=exdns-2.kube-system oci://registry-1.docker.io/rawmind/coredns-gateway --version 1.12.0-0
-helm install -n kube-system exdns-2 --set domain=zone.example.com --set secondary=exdns-1.kube-system oci://registry-1.docker.io/rawmind/coredns-gateway --version 1.12.0-0
+helm install -n kube-system exdns-1 --set domain=zone.example.com --set secondary=exdns-2.kube-system oci://registry-1.docker.io/zondax/coredns-gateway --version 1.12.1
+helm install -n kube-system exdns-2 --set domain=zone.example.com --set secondary=exdns-1.kube-system oci://registry-1.docker.io/zondax/coredns-gateway --version 1.12.1
 ```
 
 2. Obtain their external IPs

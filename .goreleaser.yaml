@@ -47,11 +47,11 @@ release:
   disable: false
   footer: |
     ## Docker Images
-    - `rawmind/k8s_gateway:{{ .Tag }}`
+    - `zondax/k8s_gateway:{{ .Tag }}`
 dockers:
   - image_templates:
       [
-        "rawmind/{{ .ProjectName }}:{{ .Version }}-amd64",
+        "zondax/{{ .ProjectName }}:{{ .Version }}-amd64",
       ]
     goarch: amd64
     dockerfile: Dockerfile.goreleaser
@@ -64,7 +64,7 @@ dockers:
       - "--platform=linux/amd64"
   - image_templates:
       [
-        "rawmind/{{ .ProjectName }}:{{ .Version }}-arm64",
+        "zondax/{{ .ProjectName }}:{{ .Version }}-arm64",
       ]
     goarch: arm64
     dockerfile: Dockerfile.goreleaser
@@ -76,11 +76,11 @@ dockers:
       - "--label=org.opencontainers.image.version={{.Version}}"
       - "--platform=linux/arm64"
 docker_manifests:
-  - name_template: "rawmind/{{ .ProjectName }}:{{ .Version }}"
+  - name_template: "zondax/{{ .ProjectName }}:{{ .Version }}"
     image_templates:
-      - "rawmind/{{ .ProjectName }}:{{ .Version }}-amd64"
-      - "rawmind/{{ .ProjectName }}:{{ .Version }}-arm64"
-  - name_template: "rawmind/{{ .ProjectName }}:latest"
+      - "zondax/{{ .ProjectName }}:{{ .Version }}-amd64"
+      - "zondax/{{ .ProjectName }}:{{ .Version }}-arm64"
+  - name_template: "zondax/{{ .ProjectName }}:latest"
     image_templates:
-      - "rawmind/{{ .ProjectName }}:{{ .Version }}-amd64"
-      - "rawmind/{{ .ProjectName }}:{{ .Version }}-arm64"
+      - "zondax/{{ .ProjectName }}:{{ .Version }}-amd64"
+      - "zondax/{{ .ProjectName }}:{{ .Version }}-arm64"

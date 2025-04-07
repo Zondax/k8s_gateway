@@ -1,4 +1,4 @@
-module github.com/rawmind/k8s_gateway
+module github.com/zondax/k8s_gateway
 
 go 1.23.0
 

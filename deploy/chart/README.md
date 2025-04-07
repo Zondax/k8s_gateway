@@ -1,5 +1,5 @@
 # coredns-gateway
-A simple chart to install [k8s_gateway](https://github.com/rawmind0/k8s_gateway)
+A simple chart to install [k8s_gateway](https://github.com/zondax/k8s_gateway)
 
 
 ## Parameters

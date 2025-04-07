@@ -1,5 +1,5 @@
 image:
-  repository: rawmind/k8s_gateway
+  repository: zondax/k8s_gateway
   tag: ""
   pullPolicy: IfNotPresent
 

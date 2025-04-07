@@ -4,7 +4,7 @@ metadata:
   name: ${releaseName:=coredns-gateway}
 spec:
   interval: 10m
-  url: oci://${zondaxRegistry}/rawmind/coredns-gateway
+  url: oci://${zondaxRegistry}/zondax/coredns-gateway
   ref:
     tag: ${releaseVersion:=1.12.0}
 ---
